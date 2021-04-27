@@ -143,9 +143,17 @@ int LinuxParser::ParseStatForProcess(const string &identifier){
   }
   return 0;
 }
-// TODO: Read and return the command associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Command(int pid[[maybe_unused]]) { return string(); }
+
+string LinuxParser::Command(int pid) { 
+  string command;
+  std::ifstream stream(kProcDirectory + std::to_string(pid) + kCmdlineFilename);
+  if(stream.is_open()){
+    std::getline(stream, command);
+    //observing null terminator issue that cuts off the string
+    //but mentor help suggests to leave this as-is
+  }
+  return command;
+ }
 
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function

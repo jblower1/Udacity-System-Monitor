@@ -12,19 +12,29 @@ using std::set;
 using std::size_t;
 using std::string;
 using std::vector;
+using std::sort;
 
 // TODO: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
-    vector<int> pids = LinuxParser::Pids();
+    processes_.erase(processes_.begin(), processes_.end());
+    vector<int> pids = LinuxParser::Pids(); 
     for(int pid : pids){
         Process process{pid};
+        process.CpuUtilization();
         processes_.push_back(process);
-    }    
+    }
+
+    sort(processes_.begin(), processes_.end(), [](Process a, Process b){
+        return b < a;
+    });
+
     return processes_; 
 }
+
+
 
 std::string System::Kernel() { return LinuxParser::Kernel(); }
 

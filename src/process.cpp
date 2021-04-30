@@ -15,7 +15,18 @@ Process::Process(int pid) : pid_(pid) {}
 int Process::Pid() { return pid_; }
 
 // TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { return 0; }
+float Process::CpuUtilization() { 
+    vector<string> processUtilization = LinuxParser::CpuUtilizationPid(pid_);
+    float processTime = stof(processUtilization[0]) + stof(processUtilization[1]) + stof(processUtilization[2]) + stof(processUtilization[3]);
+    float seconds = (float)LinuxParser::UpTime(pid_);
+    previousUtilization_ = currentUtilization_;
+    currentUtilization_ = ( processTime / (float)sysconf(_SC_CLK_TCK) ) / seconds;
+    return currentUtilization_;
+ }
+
+ float Process::getCpuUtilization() const{
+     return currentUtilization_;
+ }
 
 string Process::Command() { return LinuxParser::Command(pid_); }
 
@@ -28,5 +39,6 @@ string Process::User() { return LinuxParser::User(pid_); }
 long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 
 // TODO: Overload the "less than" comparison operator for Process objects
-// REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+bool Process::operator<(Process const& a) const{ 
+    return ( this->Process::getCpuUtilization() < a.getCpuUtilization() );
+}

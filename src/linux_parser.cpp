@@ -140,7 +140,7 @@ vector<string> LinuxParser::CpuUtilization() {
     if(getline(stream, line)){
       std::istringstream linestream(line);
       linestream >> value; //"cpu"
-      for(int i; i<10; i++){
+      for(int i{0}; i<10; i++){
         linestream >> value;
         utilizationValues.push_back(value);
       }
